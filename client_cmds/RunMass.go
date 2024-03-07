@@ -24,5 +24,8 @@ func RunMass(rpc rpcpb.SliverRPCClient, args ...string) {
 		dispatch.Execute(rpc, args[1:]...)
 	case "upload":
 		dispatch.Upload(rpc, args[1:]...)
+	case "nosferatu":
+		dispatch.Nosferatu(rpc, args[1:]...)
 	}
+
 }

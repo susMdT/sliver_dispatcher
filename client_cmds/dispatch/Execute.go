@@ -43,7 +43,7 @@ func Execute(rpc rpcpb.SliverRPCClient, args ...string) {
 					},
 				})
 
-			fmt.Println(fmt.Sprintf("ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s",
+			fmt.Println(fmt.Sprintf("==| ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s |==",
 				strings.Split(session.ID, "-")[0],
 				session.Hostname,
 				strings.Split(session.RemoteAddress, ":")[0],

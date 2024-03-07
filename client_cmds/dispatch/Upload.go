@@ -33,9 +33,10 @@ func Upload(rpc rpcpb.SliverRPCClient, args ...string) {
 	}
 
 	var session *clientpb.Session
+	var upload_rsp *sliverpb.Upload
 	for _, session = range sessions.GetSessions() {
 		if !session.IsDead {
-			_, err = rpc.Upload(
+			upload_rsp, err = rpc.Upload(
 				context.Background(), &sliverpb.UploadReq{
 					Path:    args[1],
 					Data:    data,
@@ -46,13 +47,18 @@ func Upload(rpc rpcpb.SliverRPCClient, args ...string) {
 						SessionID: session.ID,
 					},
 				})
+			fmt.Println(fmt.Sprintf("==| ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s |==",
+				strings.Split(session.ID, "-")[0],
+				session.Hostname,
+				strings.Split(session.RemoteAddress, ":")[0],
+				session.Username))
 			if err != nil {
-				fmt.Println(fmt.Sprintf("ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s",
-					strings.Split(session.ID, "-")[0],
-					session.Hostname,
-					strings.Split(session.RemoteAddress, ":")[0],
-					session.Username))
 				fmt.Println("Error: " + err.Error())
+				if upload_rsp != nil {
+					if upload_rsp.Response != nil && upload_rsp.Response.Err != "" {
+						fmt.Println("Another error: " + upload_rsp.Response.Err)
+					}
+				}
 			}
 		}
 	}
