@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sliver-dispatch/globals"
 	"sliver-dispatch/tui"
 	"sliver-dispatch/utils"
 
@@ -15,6 +16,7 @@ import (
 func main() {
 	var configPath string
 	flag.StringVar(&configPath, "config", "/root/.sliver-client/configs/default.cfg", "path to sliver client config file")
+	flag.BoolVar(&globals.DebugMode, "debug", false, "Enable debug mode")
 	flag.Parse()
 
 	// load the client configuration from the filesystem

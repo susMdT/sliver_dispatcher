@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/bishopfox/sliver/protobuf/clientpb"
 	"github.com/bishopfox/sliver/protobuf/commonpb"
@@ -14,10 +15,11 @@ import (
 // https://github.com/BishopFox/sliver/blob/c8a7948671eafba4d6f871c2f2b46b900202699d/client/command/exec/execute.go#L71
 // https://github.com/BishopFox/sliver/blob/c8a7948671eafba4d6f871c2f2b46b900202699d/client/console/console.go#L770
 func Execute(rpc rpcpb.SliverRPCClient, args ...string) {
-	for _, arg := range args[0:] {
-		fmt.Println(arg)
-	}
 
+	if len(args) < 1 {
+		fmt.Println("Need the name of an executable to run!")
+		return
+	}
 	var sessions *clientpb.Sessions
 
 	sessions, err := rpc.GetSessions(context.Background(), &commonpb.Empty{})
@@ -40,7 +42,13 @@ func Execute(rpc rpcpb.SliverRPCClient, args ...string) {
 						SessionID: session.ID,
 					},
 				})
-			fmt.Println(string(exec.Stdout))
+
+			fmt.Println(fmt.Sprintf("ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s",
+				strings.Split(session.ID, "-")[0],
+				session.Hostname,
+				strings.Split(session.RemoteAddress, ":")[0],
+				session.Username))
+			fmt.Println(string(exec.Stdout) + string(exec.Stderr))
 		}
 	}
 }

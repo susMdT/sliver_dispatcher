@@ -11,6 +11,7 @@ type Interactive_Session struct {
 }
 
 var (
+	DebugMode         bool
 	ActiveSessions    []Interactive_Session
 	Selected_Sessions []Interactive_Session
 )

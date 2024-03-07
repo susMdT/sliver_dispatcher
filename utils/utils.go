@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"regexp"
 	"sliver-dispatch/globals"
@@ -53,4 +54,10 @@ func SplitArguments(userInput string) []string {
 	}
 
 	return arguments
+}
+
+func Dprint(str string, args ...interface{}) {
+	if globals.DebugMode {
+		fmt.Println("[+] " + fmt.Sprintf(str, args...))
+	}
 }
