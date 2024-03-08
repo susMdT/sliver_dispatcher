@@ -2,8 +2,7 @@ package client_cmds
 
 import (
 	"context"
-	"fmt"
-	"log"
+	"sliver-dispatch/utils"
 	"strings"
 
 	"github.com/bishopfox/sliver/protobuf/clientpb"
@@ -12,35 +11,35 @@ import (
 )
 
 func GetConfigs(rpc rpcpb.SliverRPCClient) {
-	fmt.Println("[Builds]")
+	utils.Iprint("[Builds]")
 	var builds *clientpb.ImplantBuilds
 	builds, err := rpc.ImplantBuilds(context.Background(), &commonpb.Empty{})
 	if err != nil {
-		log.Fatal(err)
+		utils.Eprint("Error listing implant builds: %s", err)
 	}
 	var config *clientpb.ImplantConfig
 	for _, config = range builds.GetConfigs() {
-		fmt.Printf(fmt.Sprintf("ID: %-10s | GOOS: %-10s | ARCH: %-8s | C2: %-10s \n",
+		utils.Iprint("ID: %-10s | GOOS: %-10s | ARCH: %-8s | C2: %-10s",
 			strings.Split(config.ID, "-")[0],
 			config.GOOS,
 			config.GOARCH,
-			config.C2))
+			config.C2)
 	}
 
-	fmt.Println("[Profiles]")
+	utils.Iprint("[Profiles]")
 	var profiles *clientpb.ImplantProfiles
 	profiles, err = rpc.ImplantProfiles(context.Background(), &commonpb.Empty{})
 	if err != nil {
-		log.Fatal(err)
+		utils.Eprint("Error listing implant profiles: %s", err)
 	}
 	var profile *clientpb.ImplantProfile
 	for _, profile = range profiles.GetProfiles() {
-		fmt.Printf(fmt.Sprintf("%s\nID: %-10s | GOOS: %-10s | ARCH: %-8s | C2: %-10s \n",
+		utils.Iprint("%s\nID: %-10s | GOOS: %-10s | ARCH: %-8s | C2: %-10s",
 			profile.Name,
 			strings.Split(profile.Config.ID, "-")[0],
 			profile.Config.GOOS,
 			profile.Config.GOARCH,
-			profile.Config.C2))
+			profile.Config.C2)
 	}
 
 }

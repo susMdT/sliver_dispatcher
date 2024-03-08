@@ -3,7 +3,6 @@ package dispatch
 import (
 	"context"
 	"fmt"
-	"log"
 	"sliver-dispatch/utils"
 	"strings"
 
@@ -18,14 +17,15 @@ import (
 func Execute(rpc rpcpb.SliverRPCClient, args ...string) {
 
 	if len(args) < 1 {
-		fmt.Println("Need the name of an executable to run!")
+		utils.Eprint("Need the name of an executable to run!")
 		return
 	}
 	var sessions *clientpb.Sessions
 
 	sessions, err := rpc.GetSessions(context.Background(), &commonpb.Empty{})
 	if err != nil {
-		log.Fatal(err)
+		utils.Eprint("Error reading file: %s", err.Error())
+		return
 	}
 
 	var session *clientpb.Session

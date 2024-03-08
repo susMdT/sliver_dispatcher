@@ -1,33 +1,33 @@
 package client_cmds
 
 import (
-	"fmt"
 	"sliver-dispatch/globals"
+	"sliver-dispatch/utils"
 )
 
 func GetSessions() {
-	fmt.Println("[Alive Sessions]")
+	utils.Iprint("[Alive Sessions]")
 
 	var session globals.Interactive_Session
 	for _, session = range globals.ActiveSessions {
-		fmt.Printf(fmt.Sprintf("ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s | Process: %-10s | PID: %d\n",
+		utils.Iprint("ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s | Process: %-10s | PID: %d",
 			session.ID,
 			session.Host,
 			session.Address,
 			session.Username,
 			session.Process,
-			session.PID))
+			session.PID)
 	}
 
-	fmt.Println("[Selected Sessions]")
+	utils.Iprint("[Selected Sessions]")
 	for _, session = range globals.Selected_Sessions {
-		fmt.Printf(fmt.Sprintf("ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s | Process: %-10s | PID: %d\n",
+		utils.Iprint("ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s | Process: %-10s | PID: %d",
 			session.ID,
 			session.Host,
 			session.Address,
 			session.Username,
 			session.Process,
-			session.PID))
+			session.PID)
 	}
 
 }

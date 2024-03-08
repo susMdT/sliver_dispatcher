@@ -1,0 +1,33 @@
+{
+    "name": "getsystem-bof",
+    "version": "1.0.0",
+    "command_name": "getsystem",
+    "extension_author": "parzel",
+    "original_author": "parzel",
+    "repo_url": "https://github.com/parzel/getsystem-bof",
+    "help": "Execute shellcode as SYSTEM from administrator via PPID spoofing.",
+    "long_help": "",
+    "depends_on": "coff-loader",
+    "entrypoint": "go",
+    "files": [
+        {
+            "os": "windows",
+            "arch": "amd64",
+            "path": "getsystem.o"
+        }
+    ],
+    "arguments": [
+        {
+            "name": "host_process",
+            "desc": "Which process should be the host (for example cmd.exe)",
+            "type": "string",
+            "optional": false
+        },
+        {
+            "name": "shellcode_path",
+            "desc": "Path to shellcode to execute",
+            "type": "file",
+            "optional": false
+        }
+    ]
+}
