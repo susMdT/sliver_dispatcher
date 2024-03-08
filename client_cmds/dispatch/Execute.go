@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"sliver-dispatch/utils"
 	"strings"
 
 	"github.com/bishopfox/sliver/protobuf/clientpb"
@@ -43,12 +44,15 @@ func Execute(rpc rpcpb.SliverRPCClient, args ...string) {
 					},
 				})
 
-			fmt.Println(fmt.Sprintf("==| ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s |==",
+			utils.Iprint(fmt.Sprintf("==| ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s |==",
 				strings.Split(session.ID, "-")[0],
 				session.Hostname,
 				strings.Split(session.RemoteAddress, ":")[0],
 				session.Username))
-			fmt.Println(string(exec.Stdout) + string(exec.Stderr))
+			if err != nil {
+				utils.Eprint("Error: %s", err.Error())
+			}
+			utils.Iprint(string(exec.Stdout) + string(exec.Stderr))
 		}
 	}
 }

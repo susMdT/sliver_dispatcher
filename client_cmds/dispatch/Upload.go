@@ -23,12 +23,12 @@ func Upload(rpc rpcpb.SliverRPCClient, args ...string) {
 
 	sessions, err := rpc.GetSessions(context.Background(), &commonpb.Empty{})
 	if err != nil {
-		utils.Eprint(err.Error())
+		utils.Eprint("Error listing sessions: %s", err.Error())
 	}
 
 	data, err := os.ReadFile(args[0])
 	if err != nil {
-		utils.Eprint("Error reading file:", err)
+		utils.Eprint("Error reading file: %s", err.Error())
 		return
 	}
 

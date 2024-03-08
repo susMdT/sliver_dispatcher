@@ -3,7 +3,6 @@ package dispatch
 import (
 	"context"
 	"fmt"
-	"log"
 	"sliver-dispatch/utils"
 	"strconv"
 	"strings"
@@ -28,7 +27,7 @@ func Shinject(rpc rpcpb.SliverRPCClient, args ...string) {
 	var err error
 	sessions, err = rpc.GetSessions(context.Background(), &commonpb.Empty{})
 	if err != nil {
-		log.Fatal(err)
+		utils.Eprint("Error listing sessions: %s", err.Error())
 	}
 
 	var session *clientpb.Session
@@ -52,6 +51,9 @@ func Shinject(rpc rpcpb.SliverRPCClient, args ...string) {
 					},
 				})
 
+			if err != nil {
+				utils.Eprint("Something went wrong with the process listing tasking: %s", err.Error())
+			}
 			for _, p := range ps_task.Processes {
 				if p.Executable == processName {
 					pids = append(pids, int(p.Pid))

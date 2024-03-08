@@ -173,13 +173,13 @@ func BofExec(bofname string, args []string, session *clientpb.Session, rpc rpcpb
 
 	b_coff64, err := os.ReadFile("extensions/coff-loader/COFFLoader.x64.dll")
 	if err != nil {
-		Eprint("Error reading file:", err)
+		Eprint("Error reading file: %s", err.Error())
 		return BOF_ERR_OTHER
 	}
 
 	b_coff32, err := os.ReadFile("extensions/coff-loader/COFFLoader.x86.dll")
 	if err != nil {
-		Eprint("Error reading file:", err)
+		Eprint("Error reading file: %s", err.Error())
 		return BOF_ERR_OTHER
 	}
 

