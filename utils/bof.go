@@ -2,14 +2,27 @@ package utils
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
+	"slices"
 	"sliver-dispatch/globals"
+	"sort"
 	"strconv"
 	"strings"
 
 	"github.com/bishopfox/sliver/client/core"
+	"github.com/bishopfox/sliver/protobuf/clientpb"
+	"github.com/bishopfox/sliver/protobuf/commonpb"
+	"github.com/bishopfox/sliver/protobuf/rpcpb"
+	"github.com/bishopfox/sliver/protobuf/sliverpb"
+)
+
+const (
+	BOF_EXEC_SUCCESS = 1
+	BOF_EXEC_ERR     = 2
+	BOF_ERR_OTHER    = 3
 )
 
 func GetBOFArgs(args []string, binPath string, Ext globals.ExtensionCfg) ([]byte, error) {
@@ -154,4 +167,136 @@ func ParseExtCfg(path string) (globals.ExtensionCfg, error) {
 	}
 
 	return CfgParsed, nil
+}
+
+func BofExec(bofname string, args []string, session *clientpb.Session, rpc rpcpb.SliverRPCClient) int {
+
+	b_coff64, err := os.ReadFile("extensions/coff-loader/COFFLoader.x64.dll")
+	if err != nil {
+		Eprint("Error reading file:", err)
+		return BOF_ERR_OTHER
+	}
+
+	b_coff32, err := os.ReadFile("extensions/coff-loader/COFFLoader.x86.dll")
+	if err != nil {
+		Eprint("Error reading file:", err)
+		return BOF_ERR_OTHER
+	}
+
+	var resp_l *sliverpb.ListExtensions
+	var resp_r *sliverpb.RegisterExtension
+	var resp_c *sliverpb.CallExtension
+	var ldrCfg globals.ExtensionCfg
+	var bofCfg globals.ExtensionCfg
+	var extArgs []byte
+	if !session.IsDead && session.OS == "windows" {
+
+		resp_l, err = rpc.ListExtensions(
+			context.Background(),
+			&sliverpb.ListExtensionsReq{
+				Request: &commonpb.Request{
+					Async:     false,
+					SessionID: session.ID,
+				},
+			},
+		)
+
+		if err != nil {
+			Eprint("Error checking coff-loader is loaded into the session: " + err.Error())
+			return BOF_ERR_OTHER
+		}
+
+		if !slices.Contains(resp_l.Names, "coff-loader") {
+			Dprint("Registering coff-loader extension")
+			if session.Arch == "amd64" {
+				resp_r, err = rpc.RegisterExtension(
+					context.Background(),
+					&sliverpb.RegisterExtensionReq{
+						Name: "coff-loader",
+						OS:   "windows",
+						Data: b_coff64,
+						Request: &commonpb.Request{
+							Async:     false,
+							SessionID: session.ID,
+						},
+					},
+				)
+			} else {
+				resp_r, err = rpc.RegisterExtension(
+					context.Background(),
+					&sliverpb.RegisterExtensionReq{
+						Name: "coff-loader",
+						OS:   "windows",
+						Data: b_coff32,
+						Request: &commonpb.Request{
+							Async:     false,
+							SessionID: session.ID,
+						},
+					},
+				)
+			}
+			if resp_r != nil {
+				fmt.Println(resp_r.Response.String())
+			}
+			if err != nil {
+				fmt.Println("Error loading coff-loader extension to the session: " + err.Error())
+			}
+		}
+		ldrCfg, err = ParseExtCfg("extensions/coff-loader/extension.json")
+		if err != nil {
+			Eprint("Error parsing the coff-loader extension configuration: " + err.Error())
+			return BOF_ERR_OTHER
+		}
+
+		bofCfg, err = ParseExtCfg("extensions/" + bofname + "/extension.json")
+		if err != nil {
+			Eprint("Error parsing %s extension configuration: "+err.Error(), bofname)
+			return BOF_ERR_OTHER
+		}
+		extArgs, err = GetBOFArgs(
+			args,
+			"extensions/"+bofCfg.Command_Name+"/"+bofCfg.Files[sort.Search(len(bofCfg.Files), func(i int) bool { return bofCfg.Files[i].Arch == session.Arch })].Path,
+			bofCfg,
+		)
+		if err != nil {
+			Eprint("Error parsing extension arguments: " + err.Error())
+			return BOF_ERR_OTHER
+		}
+
+		resp_c, err = rpc.CallExtension(
+			context.Background(),
+			&sliverpb.CallExtensionReq{
+				Name:   ldrCfg.Command_Name,
+				Export: ldrCfg.Entrypoint,
+				Args:   extArgs,
+				Request: &commonpb.Request{
+					Async:     false,
+					SessionID: session.ID,
+				},
+			},
+		)
+
+		if resp_c.Output != nil {
+			Iprint("Response: " + string(resp_c.Output))
+		}
+		if err != nil {
+			Eprint("Error: " + err.Error())
+		}
+		if resp_c.Response != nil {
+			if resp_c.Response.Err != "" {
+				Eprint("Error: " + resp_c.Response.Err)
+			}
+		}
+
+		if err != nil {
+			return BOF_EXEC_ERR
+		}
+		if resp_c.Response != nil {
+			if resp_c.Response.Err != "" {
+				return BOF_EXEC_ERR
+			}
+		}
+		return BOF_EXEC_SUCCESS
+	}
+	return BOF_ERR_OTHER
 }

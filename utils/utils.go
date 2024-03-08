@@ -11,6 +11,7 @@ import (
 	"github.com/bishopfox/sliver/protobuf/clientpb"
 	"github.com/bishopfox/sliver/protobuf/commonpb"
 	"github.com/bishopfox/sliver/protobuf/rpcpb"
+	. "github.com/logrusorgru/aurora"
 )
 
 func UpdateSessions(rpc rpcpb.SliverRPCClient) {
@@ -58,6 +59,14 @@ func SplitArguments(userInput string) []string {
 
 func Dprint(str string, args ...interface{}) {
 	if globals.DebugMode {
-		fmt.Println("[+] " + fmt.Sprintf(str, args...))
+		fmt.Printf("%s %s\n", Cyan("[*]"), fmt.Sprintf(str, args...))
 	}
+}
+
+func Eprint(str string, args ...interface{}) {
+	fmt.Printf("%s %s\n", BrightRed("[!]"), fmt.Sprintf(str, args...))
+}
+
+func Iprint(str string, args ...interface{}) {
+	fmt.Printf("%s %s\n", BrightGreen("[+]"), fmt.Sprintf(str, args...))
 }

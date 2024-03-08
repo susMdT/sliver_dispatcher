@@ -1,7 +1,6 @@
 package tui
 
 import (
-	"fmt"
 	"os"
 	"sliver-dispatch/client_cmds"
 	"sliver-dispatch/globals"
@@ -47,9 +46,9 @@ func Main(rpc rpcpb.SliverRPCClient) {
 				client_cmds.RunMass(rpc, input[1:]...)
 			case "debug":
 				globals.DebugMode = !globals.DebugMode
-				fmt.Println("Debug mode set to " + strconv.FormatBool(globals.DebugMode))
+				utils.Iprint("Debug mode set to " + strconv.FormatBool(globals.DebugMode))
 			default:
-				fmt.Println("Unknown command: " + t)
+				utils.Eprint("Unknown command: " + t)
 			}
 		}
 		utils.UpdateSessions(rpc)

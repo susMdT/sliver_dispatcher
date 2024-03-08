@@ -1,7 +1,6 @@
 package client_cmds
 
 import (
-	"fmt"
 	"sliver-dispatch/client_cmds/dispatch"
 	"sliver-dispatch/utils"
 	"strings"
@@ -16,7 +15,7 @@ func RunMass(rpc rpcpb.SliverRPCClient, args ...string) {
 		utils.Dprint("Arg %d: %s", idx, arg)
 	}
 	if len(args) < 2 {
-		fmt.Println("Missing arguments!")
+		utils.Eprint("Missing arguments!")
 		return
 	}
 	switch strings.ToLower(args[0]) {
