@@ -1,0 +1,32 @@
+{
+  "name": "HOLLOW",
+  "version": "v0.0.1",
+  "command_name": "hollow",
+  "extension_author": "c2biz",
+  "original_author": "boku7",
+  "repo_url": "https://github.com/sliverarmory/hollow",
+  "help": "EarlyBird process hollowing technique",
+  "depends_on": "coff-loader",
+  "entrypoint": "go",
+  "files": [
+    {
+      "os": "windows",
+      "arch": "amd64",
+      "path": "hollow.x64.o"
+    }
+  ],
+  "arguments": [
+    {
+      "name": "pe",
+      "desc": "/path/to/hollow/pe",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "bin",
+      "desc": "/local/path/to/shellcode.bin",
+      "type": "file",
+      "optional": false
+    }
+  ]
+}

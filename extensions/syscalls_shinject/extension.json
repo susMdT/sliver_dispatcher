@@ -1,0 +1,32 @@
+{
+  "name": "Syscalls Shellcode Injection BOF",
+  "version": "v0.0.1",
+  "command_name": "syscalls_shinject",
+  "extension_author": "c2biz",
+  "original_author": "ajpc500",
+  "repo_url": "https://github.com/sliverarmory/BOFs",
+  "help": "Inject shellcode (either custom or beacon) into remote process using Syscalls",
+  "depends_on": "coff-loader",
+  "entrypoint": "go",
+  "files": [
+    {
+      "os": "windows",
+      "arch": "amd64",
+      "path": "syscallsinject.x64.o"
+    }
+  ],
+  "arguments": [
+    {
+      "name": "pid",
+      "desc": "Target Process ID",
+      "type": "int",
+      "optional": false
+    },
+    {
+      "name": "bin",
+      "desc": "/local/path/to/shellcode.bin",
+      "type": "file",
+      "optional": false
+    }
+  ]
+}
