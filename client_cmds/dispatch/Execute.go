@@ -14,7 +14,7 @@ import (
 
 // https://github.com/BishopFox/sliver/blob/c8a7948671eafba4d6f871c2f2b46b900202699d/client/command/exec/execute.go#L71
 // https://github.com/BishopFox/sliver/blob/c8a7948671eafba4d6f871c2f2b46b900202699d/client/console/console.go#L770
-func Execute(rpc rpcpb.SliverRPCClient, args ...string) {
+func Execute(rpc rpcpb.SliverRPCClient, target_os string, args ...string) {
 
 	if len(args) < 1 {
 		utils.Eprint("Need the name of an executable to run!")
@@ -31,7 +31,7 @@ func Execute(rpc rpcpb.SliverRPCClient, args ...string) {
 	var session *clientpb.Session
 	var exec *sliverpb.Execute
 	for _, session = range sessions.GetSessions() {
-		if !session.IsDead {
+		if !session.IsDead && session.OS == target_os {
 			exec, err = rpc.Execute(
 				context.Background(),
 				&sliverpb.ExecuteReq{

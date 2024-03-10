@@ -17,7 +17,6 @@ func completer(d prompt.Document) []prompt.Suggest {
 		{Text: "get_sessions", Description: "List active sliver sessions"},
 		{Text: "get_configs", Description: "List prior sliver build configurations and server configs"},
 		{Text: "select_sessions", Description: "Select sliver sessions to run commands on"},
-		{Text: "run_all_selected", Description: "Run a command across all selected sessions"},
 		{Text: "run_all_windows", Description: "Run a command across all windows sessions"},
 		{Text: "run_all_linux", Description: "Run a command across all linux sessions"},
 		{Text: "help", Description: "Help"},
@@ -43,7 +42,17 @@ func Main(rpc rpcpb.SliverRPCClient) {
 			case "get_configs":
 				client_cmds.GetConfigs(rpc)
 			case "run_all_windows":
-				client_cmds.RunMass(rpc, input[1:]...)
+				if len(input) > 2 {
+					client_cmds.RunMass(rpc, "windows", input[1:]...)
+				} else {
+					utils.Eprint("Error: need to specify a command to dispatch")
+				}
+			case "run_all_linux":
+				if len(input) > 2 {
+					client_cmds.RunMass(rpc, "linux", input[1:]...)
+				} else {
+					utils.Eprint("Error: need to specify a command to dispatch")
+				}
 			case "debug":
 				globals.DebugMode = !globals.DebugMode
 				utils.Iprint("Debug mode set to " + strconv.FormatBool(globals.DebugMode))
@@ -52,6 +61,5 @@ func Main(rpc rpcpb.SliverRPCClient) {
 			}
 		}
 		utils.UpdateSessions(rpc)
-
 	}
 }

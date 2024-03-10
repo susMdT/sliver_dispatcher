@@ -13,7 +13,7 @@ import (
 	"github.com/bishopfox/sliver/protobuf/sliverpb"
 )
 
-func Upload(rpc rpcpb.SliverRPCClient, args ...string) {
+func Upload(rpc rpcpb.SliverRPCClient, target_os string, args ...string) {
 
 	if len(args) < 2 {
 		utils.Eprint("Need the full path to a file to upload and the destination path!")
@@ -35,7 +35,7 @@ func Upload(rpc rpcpb.SliverRPCClient, args ...string) {
 	var session *clientpb.Session
 	var upload_rsp *sliverpb.Upload
 	for _, session = range sessions.GetSessions() {
-		if !session.IsDead {
+		if !session.IsDead && session.OS == target_os {
 			upload_rsp, err = rpc.Upload(
 				context.Background(), &sliverpb.UploadReq{
 					Path:    args[1],

