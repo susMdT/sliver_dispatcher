@@ -27,6 +27,8 @@ func RunMass(rpc rpcpb.SliverRPCClient, target_os string, args ...string) {
 		dispatch.Nosferatu(rpc, args[1:]...)
 	case "getsystem":
 		dispatch.GetSystem(rpc, args[1:]...)
+	case "jump":
+		dispatch.Jump(rpc, args[1:]...)
 	case "shinject":
 		dispatch.Shinject(rpc, args[1:]...)
 	case "killdefend":
