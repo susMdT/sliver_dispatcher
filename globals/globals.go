@@ -1,5 +1,11 @@
 package globals
 
+import (
+	"sync"
+
+	"github.com/bishopfox/sliver/protobuf/rpcpb"
+)
+
 type Interactive_Session struct {
 	Host     string
 	Address  string
@@ -29,7 +35,9 @@ type ExtensionCfg struct {
 }
 
 var (
+	L_rpc             sync.Mutex
 	DebugMode         bool
 	ActiveSessions    []Interactive_Session
 	Selected_Sessions []Interactive_Session
+	Rpc               rpcpb.SliverRPCClient
 )

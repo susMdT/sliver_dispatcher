@@ -52,7 +52,9 @@ func Execute(rpc rpcpb.SliverRPCClient, target_os string, args ...string) {
 			if err != nil {
 				utils.Eprint("Error: %s", err.Error())
 			}
-			utils.Iprint(string(exec.Stdout) + string(exec.Stderr))
+			if exec != nil {
+				utils.Iprint(string(exec.Stdout) + string(exec.Stderr))
+			}
 		}
 	}
 }

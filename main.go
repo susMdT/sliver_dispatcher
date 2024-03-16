@@ -34,5 +34,7 @@ func main() {
 
 	utils.UpdateSessions(rpc)
 
-	tui.Main(rpc)
+	globals.Rpc = rpc
+
+	tui.Main()
 }
