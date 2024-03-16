@@ -46,15 +46,15 @@ func init() {
 	RootCmd.AddCommand(GetSessions)
 
 	RootCmd.AddCommand(Run_all_windows)
-	Run_all_windows.AddCommand(modules.Execute)
-	Run_all_windows.AddCommand(modules.Upload)
+	Run_all_windows.AddCommand(modules.GetExecuteInst())
+	Run_all_windows.AddCommand(modules.GetUploadInst())
 	Run_all_windows.AddCommand(modules.GetSystem)
 	Run_all_windows.AddCommand(modules.Nosferatu)
 	Run_all_windows.AddCommand(modules.Shinject)
-	Run_all_windows.AddCommand(modules.Script)
+	Run_all_windows.AddCommand(modules.GetScriptInst())
 
 	RootCmd.AddCommand(Run_all_linux)
-	Run_all_linux.AddCommand(modules.Execute)
-	Run_all_linux.AddCommand(modules.Upload)
-	Run_all_linux.AddCommand(modules.Script)
+	Run_all_linux.AddCommand(modules.GetExecuteInst())
+	Run_all_linux.AddCommand(modules.GetUploadInst())
+	Run_all_linux.AddCommand(modules.GetScriptInst())
 }

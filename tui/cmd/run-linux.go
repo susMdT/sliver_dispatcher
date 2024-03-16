@@ -4,7 +4,6 @@ import "github.com/spf13/cobra"
 
 var Run_all_linux = &cobra.Command{
 	Use:                "run_all_linux [ module ]",
-	Example:            "bruh",
 	Short:              "Run a module across all linux sessions",
 	Args:               cobra.MinimumNArgs(1),
 	DisableFlagParsing: true,

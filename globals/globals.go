@@ -34,10 +34,18 @@ type ExtensionCfg struct {
 	Arguments    []Arg
 }
 
+// TODO: when implementing selective dispatch, pass these codes instead of an OS string
+const (
+	DISPATCH_WIN    = 1
+	DISPATCH_LIN    = 2
+	DISPATCH_CUSTOM = 3
+)
+
 var (
 	L_rpc             sync.Mutex
 	DebugMode         bool
 	ActiveSessions    []Interactive_Session
 	Selected_Sessions []Interactive_Session
 	Rpc               rpcpb.SliverRPCClient
+	DispatchType      int
 )
