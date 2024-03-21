@@ -29,6 +29,8 @@ func GetUploadInst() *cobra.Command {
 				dispatch.Upload(globals.Rpc, "windows", args[0:]...)
 			} else if cmd.Parent().Name() == "run_all_linux" {
 				dispatch.Upload(globals.Rpc, "linux", args[0:]...)
+			} else if cmd.Parent().Name() == "run_all_selected" {
+				dispatch.UploadOnSelectedSessions(globals.Rpc, args[0:]...)
 			}
 		},
 	}

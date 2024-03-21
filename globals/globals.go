@@ -45,7 +45,7 @@ var (
 	L_rpc             sync.Mutex
 	DebugMode         bool
 	ActiveSessions    []Interactive_Session
-	Selected_Sessions []Interactive_Session
+	Selected_Sessions []string
 	Rpc               rpcpb.SliverRPCClient
 	DispatchType      int
 )

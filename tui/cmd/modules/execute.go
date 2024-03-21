@@ -28,6 +28,8 @@ func GetExecuteInst() *cobra.Command {
 				dispatch.Execute(globals.Rpc, "windows", args[0:]...)
 			} else if cmd.Parent().Name() == "run_all_linux" {
 				dispatch.Execute(globals.Rpc, "linux", args[0:]...)
+			} else if cmd.Parent().Name() == "run_all_selected" {
+				dispatch.ExecuteOnSelectedSessions(globals.Rpc, args[0:]...)
 			}
 		},
 	}
