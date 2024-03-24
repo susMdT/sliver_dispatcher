@@ -26,8 +26,12 @@ var Shinject = &cobra.Command{
 		}
 		if cmd.Parent().Name() == "run_all_windows" {
 			dispatch.Shinject(globals.Rpc, args[0:]...)
+		} else if 
+		   cmd.Parent().Name() == "run_all_selected" {
+			dispatch.ShinjectOnSelectedSessions(globals.Rpc, args[0:]...)
 		} else {
 			utils.Eprint("Cannot run shinject on linux!")
 		}
+
 	},
 }

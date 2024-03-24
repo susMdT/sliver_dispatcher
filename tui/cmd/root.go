@@ -62,5 +62,6 @@ func init() {
         RootCmd.AddCommand(Run_all_selected)
         Run_all_selected.AddCommand(modules.GetExecuteInst())
         Run_all_selected.AddCommand(modules.GetUploadInst())
+        Run_all_selected.AddCommand(modules.Shinject)
 }
 
