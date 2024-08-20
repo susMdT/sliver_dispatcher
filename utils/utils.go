@@ -16,12 +16,13 @@ import (
 
 func UpdateSessions(rpc rpcpb.SliverRPCClient) {
 	var sessions *clientpb.Sessions
+	var session *clientpb.Session
+
 	sessions, err := rpc.GetSessions(context.Background(), &commonpb.Empty{})
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	var session *clientpb.Session
 	globals.ActiveSessions = globals.ActiveSessions[:0]
 	for _, session = range sessions.Sessions {
 		if !session.IsDead {
@@ -38,6 +39,7 @@ func UpdateSessions(rpc rpcpb.SliverRPCClient) {
 	}
 }
 
+// Helper to split arguments from user and feed into sliver command
 func SplitArguments(userInput string) []string {
 	// Define a regular expression pattern to match quoted substrings or non-quoted substrings
 	pattern := `"(?:\\.|[^"\\])*"|\S+`
@@ -57,16 +59,19 @@ func SplitArguments(userInput string) []string {
 	return arguments
 }
 
+// Debug
 func Dprint(str string, args ...interface{}) {
 	if globals.DebugMode {
 		fmt.Printf("%s %s\n", Cyan("[*]"), fmt.Sprintf(str, args...))
 	}
 }
 
+// Error
 func Eprint(str string, args ...interface{}) {
 	fmt.Printf("%s %s\n", BrightRed("[!]"), fmt.Sprintf(str, args...))
 }
 
+// Informational
 func Iprint(str string, args ...interface{}) {
 	fmt.Printf("%s %s\n", BrightGreen("[+]"), fmt.Sprintf(str, args...))
 }

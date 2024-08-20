@@ -4,6 +4,7 @@ import (
 	"sliver-dispatch/globals"
 	"sliver-dispatch/tui"
 	"sliver-dispatch/utils"
+	"time"
 
 	"flag"
 	"log"
@@ -11,6 +12,7 @@ import (
 	"github.com/bishopfox/sliver/client/assets"
 	"github.com/bishopfox/sliver/client/transport"
 	"github.com/bishopfox/sliver/protobuf/rpcpb"
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -24,17 +26,22 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	// connect to the server
-	var rpc rpcpb.SliverRPCClient
-	rpc, ln, err := transport.MTLSConnect(config)
+	var ln *grpc.ClientConn
+	globals.Rpc, ln, err = transport.MTLSConnect(config)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer ln.Close()
 
-	utils.UpdateSessions(rpc)
-
-	globals.Rpc = rpc
-
+	go func(_rpc *rpcpb.SliverRPCClient) {
+		for {
+			globals.L_Rpc.Lock()
+			utils.UpdateSessions(*_rpc)
+			globals.L_Rpc.Unlock()
+			time.Sleep(time.Second * 5)
+		}
+	}(&globals.Rpc)
 	tui.Main()
 }

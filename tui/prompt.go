@@ -2,9 +2,7 @@ package tui
 
 import (
 	"strings"
-	"time"
 
-	"sliver-dispatch/globals"
 	"sliver-dispatch/tui/cmd"
 	"sliver-dispatch/utils"
 
@@ -40,13 +38,5 @@ var advancedPrompt = &cobraprompt.CobraPrompt{
 }
 
 func Main() {
-	go func() {
-		for {
-			globals.L_rpc.Lock()
-			utils.UpdateSessions(globals.Rpc)
-			globals.L_rpc.Unlock()
-			time.Sleep(time.Second * 5)
-		}
-	}()
 	advancedPrompt.Run()
 }

@@ -42,10 +42,10 @@ const (
 )
 
 var (
-	L_rpc             sync.Mutex
 	DebugMode         bool
 	ActiveSessions    []Interactive_Session
 	Selected_Sessions []string
 	Rpc               rpcpb.SliverRPCClient
+	L_Rpc             sync.RWMutex
 	DispatchType      int
 )
